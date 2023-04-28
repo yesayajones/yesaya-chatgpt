@@ -1,5 +1,6 @@
 //Import the necessary dependencies
 import { useState, useEffect } from 'react';
+import Models from './Components/Models';
 import './App.css';
 import './normal.css';
 
@@ -166,6 +167,13 @@ function App() {
 					the most logical, 1 is the most creative.
 				</div>
 			</aside>
+			<Models
+				models={models}
+				currentModel={currentModel}
+				setCurrentModel={setCurrentModel}
+				setTemperature={setTemperature}
+			/>
+
 			{/* Chat-Box */}
 			<section className='w-screen h-screen bg-[#f9f8f9] relative'>
 				{/* Chat-Log */}
