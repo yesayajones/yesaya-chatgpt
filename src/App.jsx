@@ -124,8 +124,7 @@ function App() {
 					))}
 				</select>
 				<div className='text-start text-sm my-3 w-[200px]'>
-					The model parameter controls the engine used to generate the response.
-					Davinci produces best results.
+					Controls the response engine. Davinci produces best results.
 				</div>
 
 				<div className='text-xl font-semibold text-left mt-8 mb-4'>
