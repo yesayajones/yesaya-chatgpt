@@ -30,14 +30,17 @@ function App() {
 		},
 	]);
 
+	//set the initial temperature to zero
 	const [currentTemperature, setTemperature] = useState(0);
+	//range of temperature as an array
 	const temperature = [0, 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+	//available language models
 	const [models, setModels] = useState([]);
 
 	//onload call getEngines function
 	useEffect(() => {
 		getEngines();
-	}, []);
+	}, []); // the empty array [] as the second argument ensures that the effect only runs once.
 
 	//Clear chat log
 	const clearChat = () =>
@@ -59,9 +62,9 @@ function App() {
 
 	//Called when user submitts a message to the chatbot
 	async function handleSubmit(e) {
-		//prevent page from reloading
+		//prevent default form submission
 		e.preventDefault();
-		//Add user's message to the chat log array on top of the current chat
+		//create new chatlog entry with the user's message and update
 		let newChatLog = [...chatLog, { user: 'me', message: `${input}` }];
 		console.log(newChatLog);
 		//Update the chat log state variable using the setChatLog function to include the new message
