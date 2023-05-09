@@ -23,12 +23,14 @@ function App() {
 	//Set current model to be text-davinci-003
 	const [currentModel, setCurrentModel] = useState('text-davinci-003');
 	//Keeps track of the chat history
-	const [chatLog, setChatLog] = useState([
-		{
-			user: 'gpt',
-			message: 'How can I help you my master?',
-		},
-	]);
+	const [chatLogs, setChatLogs] = useState({
+		'text-davinci-003': [
+			{
+				user: 'gpt',
+				message: 'How can I help you my master?',
+			},
+		],
+	});
 
 	//set the initial temperature to zero
 	const [currentTemperature, setTemperature] = useState(0);
@@ -44,7 +46,7 @@ function App() {
 
 	//Clear chat log
 	const clearChat = () =>
-		setChatLog([
+		setChatLogs([
 			{
 				user: 'gpt',
 				message: 'How can I help you my master?',
@@ -52,12 +54,29 @@ function App() {
 		]);
 
 	//getEngines function retrieves the list of available language models
-	function getEngines() {
-		//Use the listEngines to get the list of available engines in OpenAI API
-		const response = openai
-			.listEngines()
-			//Update models variable using the setModels function
-			.then((res) => setModels(res.data.data));
+	// function getEngines() {
+	// 	//Use the listEngines to get the list of available engines in OpenAI API
+	// 	const response = openai
+	// 		.listEngines()
+	// 		//Update models variable using the setModels function
+	// 		.then((res) => setModels(res.data.data));
+	// }
+
+	async function getEngines() {
+		const response = await openai.listEngines();
+		setModels(response.data.data);
+
+		//Initialize chat logs for each model
+		const logs = {};
+		response.data.data.forEach((model) => {
+			logs[model.id] = [
+				{
+					user: 'gpt',
+					message: 'How can I help you my master?',
+				},
+			];
+		});
+		setChatLogs(logs);
 	}
 
 	//Called when user submitts a message to the chatbot
@@ -65,10 +84,13 @@ function App() {
 		//prevent default form submission
 		e.preventDefault();
 		//create new chatlog entry with the user's message and update
-		let newChatLog = [...chatLog, { user: 'me', message: `${input}` }];
+		let newChatLog = [
+			...chatLogs[currentModel],
+			{ user: 'me', message: `${input}` },
+		];
 		console.log(newChatLog);
 		//Update the chat log state variable using the setChatLog function to include the new message
-		await setChatLog(newChatLog);
+		await setChatLogs({ ...chatLogs, [currentModel]: newChatLog });
 
 		//Send request (with several parameters) to OpenAI API to generate response on user's input.
 		//Use the createCompletion method from OpenAI API to generate response to the user's input.
@@ -89,14 +111,14 @@ function App() {
 		console.log(response.data);
 		//update the newChatLog array with the chatbot's reponse
 		newChatLog = [
-			...chatLog,
+			...chatLogs,
 			{
 				user: 'gpt',
 				message: response.data.choices[0].text.toString().replace('\n\n', '\n'),
 			},
 		];
 		//update chat log state
-		await setChatLog(newChatLog);
+		await setChatLogs(newChatLog);
 	}
 
 	return (
@@ -181,8 +203,8 @@ function App() {
 				{/* Chat-Log */}
 				<div className='text-left h-full mb-[50px] overflow-y-scroll'>
 					{/* Render the chat message in the chat history */}
-					{chatLog.map((message, index) => (
-						<ChatMessage key={index} message={message} />
+					{chatLogs[currentModel].map((chat, index) => (
+						<ChatMessage key={index} user={chat.user} message={chat.message} />
 					))}
 					<div className='h-24'></div>
 				</div>
@@ -190,10 +212,12 @@ function App() {
 				<div className='px-[24px] absolute bottom-[12px] left-0 right-[12px] mx-20'>
 					<form onSubmit={handleSubmit} className=''>
 						<input
+							type='text'
 							value={input}
 							onChange={(e) => setInput(e.target.value)}
 							className='bg-[#f9f8f9] w-11/12 rounded-[5px] border-none m-[12px] outline-none shadow-md p-[6px] h-12 px-6'
-						></input>
+						/>
+						<button type='submit'>Send</button>
 					</form>
 				</div>
 			</section>
@@ -203,8 +227,8 @@ function App() {
 
 export default App;
 
-const ChatMessage = ({ message }) => {
-	if (message.user === 'gpt') {
+const ChatMessage = ({ user, message }) => {
+	if (user === 'gpt') {
 		return (
 			<div className='bg-[#f9f8f9]'>
 				<div className='max-w-[640px] mx-auto flex p-[12px] px-[24px]'>
@@ -217,7 +241,7 @@ const ChatMessage = ({ message }) => {
 						/>
 					</div>
 					{/* message */}
-					<div className='px-[40px] h-min'>{message.message}</div>
+					<div className='px-[40px] h-min'>{message}</div>
 				</div>
 			</div>
 		);
@@ -231,7 +255,7 @@ const ChatMessage = ({ message }) => {
 						<img src='user.png' className='w-[40px] h-[40px] rounded-full' />
 					</div>
 					{/* message */}
-					<div className='px-[40px]'>{message.message}</div>
+					<div className='px-[40px]'>{message}</div>
 				</div>
 			</div>
 		);
