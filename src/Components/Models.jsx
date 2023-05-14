@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaRobot } from 'react-icons/fa';
 
 function Models({ models, currentModel, setCurrentModel, setTemperature }) {
 	const [activeModel, setActiveModel] = useState(null);
@@ -45,7 +46,10 @@ function Models({ models, currentModel, setCurrentModel, setTemperature }) {
 						handleModelClick(model.id);
 					}}
 				>
-					<h5 className='text-lg font-semibold'>{description}</h5>
+					<span>
+						<FaRobot className='robot' />
+						<h5 className='text-lg font-semibold'>{description}</h5>
+					</span>
 				</div>
 			);
 		});
