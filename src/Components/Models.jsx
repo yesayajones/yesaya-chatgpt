@@ -9,6 +9,7 @@ function Models({ models, currentModel, setCurrentModel, setTemperature }) {
 
 	// Array of model descriptions
 	const modelDescriptions = [
+		{ id: 'whisper-1', description: 'Generate general text' },
 		{ id: 'babbage', description: 'Short form text' },
 		{ id: 'davinci', description: 'Long form text' },
 		{ id: 'text-davinci-edit-001', description: 'Articles and Essays' },
@@ -21,7 +22,6 @@ function Models({ models, currentModel, setCurrentModel, setTemperature }) {
 		{ id: 'text-davinci-001', description: 'Human-like text' },
 		{ id: 'ada', description: 'Medical texts' },
 		{ id: 'babbage-code-search-text', description: 'Code completion' },
-		{ id: 'babbage-similarity', description: 'Plagiarism detection' },
 	];
 
 	// Function to generate the top ten models
@@ -38,7 +38,7 @@ function Models({ models, currentModel, setCurrentModel, setTemperature }) {
 					className={`w-[200px] h-10 pt-2 px-2 my-4 rounded-md text-start cursor-pointer ${
 						activeModel === model.id
 							? 'bg-[#1a371b] text-white'
-							: 'bg-white hover:bg-[#1a371b] hover:text-orange-200'
+							: 'bg-white hover:bg-[#224523] hover:text-orange-100'
 					}`}
 					onClick={() => {
 						setCurrentModel(model.id);
