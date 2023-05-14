@@ -255,7 +255,9 @@ const ChatMessage = ({ user, message }) => {
 						<img src='user.png' className='w-[40px] h-[40px] rounded-full' />
 					</div>
 					{/* message */}
-					<div className='px-[40px]'>{message}</div>
+					<div className='px-[40px] bg-[#daf4dc] w-full h-full p-4 rounded-md'>
+						{message}
+					</div>
 				</div>
 			</div>
 		);
