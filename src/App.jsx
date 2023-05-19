@@ -40,20 +40,9 @@ function App() {
 	const [models, setModels] = useState([]);
 
 	//onload call getEngines function
-	// useEffect(() => {
-	// 	getEngines();
-	// }, []); // the empty array [] as the second argument ensures that the effect only runs once.
-
 	useEffect(() => {
-		// Fetch the list of available language models from the server
-		fetch('/models')
-			.then((res) => res.json())
-			.then((data) => {
-				setModels(data.models);
-				setCurrentModel(data.models[0].id);
-			})
-			.catch((err) => console.error(err));
-	}, []);
+		getEngines();
+	}, []); // the empty array [] as the second argument ensures that the effect only runs once.
 
 	//Clear chat log
 	const clearChat = () =>
@@ -64,82 +53,47 @@ function App() {
 			},
 		]);
 
-	// async function getEngines() {
-	// 	const response = await openai.listEngines();
-	// 	setModels(response.data.data);
-
-	// 	//Initialize chat logs for each model
-	// 	const logs = {};
-	// 	response.data.data.forEach((model) => {
-	// 		logs[model.id] = [
-	// 			{
-	// 				user: 'gpt',
-	// 				message: 'How can I help you my master?',
-	// 			},
-	// 		];
-	// 	});
-	// 	setChatLogs(logs);
+	//getEngines function retrieves the list of available language models
+	// function getEngines() {
+	// 	//Use the listEngines to get the list of available engines in OpenAI API
+	// 	const response = openai
+	// 		.listEngines()
+	// 		//Update models variable using the setModels function
+	// 		.then((res) => setModels(res.data.data));
 	// }
 
-	// //Called when user submitts a message to the chatbot
-	// async function handleSubmit(e) {
-	// 	//prevent default form submission
-	// 	e.preventDefault();
-	// 	//create new chatlog entry with the user's message and update
-	// 	let newChatLog = [
-	// 		...chatLogs[currentModel],
-	// 		{ user: 'me', message: `${input}` },
-	// 	];
-	// 	console.log(newChatLog);
-	// 	//Update the chat log state variable using the setChatLog function to include the new message
-	// 	await setChatLogs({ ...chatLogs, [currentModel]: newChatLog });
+	async function getEngines() {
+		const response = await openai.listEngines();
+		setModels(response.data.data);
 
-	// 	//Send request (with several parameters) to OpenAI API to generate response on user's input.
-	// 	//Use the createCompletion method from OpenAI API to generate response to the user's input.
-	// 	const response = await openai.createCompletion({
-	// 		//parameters
-	// 		//engine
-	// 		model: currentModel,
-	// 		//User's input
-	// 		prompt: input,
-	// 		//Number of tokens to generate in the response
-	// 		max_tokens: 100,
-	// 		//Temperature setting
-	// 		temperature: currentTemperature,
-	// 	});
+		//Initialize chat logs for each model
+		const logs = {};
+		response.data.data.forEach((model) => {
+			logs[model.id] = [
+				{
+					user: 'gpt',
+					message: 'How can I help you my master?',
+				},
+			];
+		});
+		setChatLogs(logs);
+	}
 
-	// 	//When response is received, setInput state to empty string
-	// 	await setInput('');
-	// 	console.log(response.data);
-	// 	//update the newChatLog array with the chatbot's reponse
-	// 	newChatLog = [
-	// 		...chatLogs,
-	// 		{
-	// 			user: 'gpt',
-	// 			message: response.data.choices[0].text.toString().replace('\n\n', '\n'),
-	// 		},
-	// 	];
-	// 	//update chat log state
-	// 	await setChatLogs(newChatLog);
-	// }
-
-	const handleSubmit = async (e) => {
+	//Called when user submitts a message to the chatbot
+	async function handleSubmit(e) {
+		//prevent default form submission
 		e.preventDefault();
-
-		// If the current model hasn't been initialized in the chat logs state, initialize it with an empty array
-		if (!chatLogs[currentModel]) {
-			setChatLogs({ ...chatLogs, [currentModel]: [] });
-		}
-
-		// Add the user's input to the chat log
+		//create new chatlog entry with the user's message and update
 		let newChatLog = [
 			...chatLogs[currentModel],
-			{ user: 'user', message: input },
+			{ user: 'me', message: `${input}` },
 		];
+		console.log(newChatLog);
+		//Update the chat log state variable using the setChatLog function to include the new message
 		await setChatLogs({ ...chatLogs, [currentModel]: newChatLog });
 
-		// Send request (with several parameters) to OpenAI API to generate response on user's input.
-		// Use the createCompletion method from OpenAI API to generate response to the user's input.
+		//Send request (with several parameters) to OpenAI API to generate response on user's input.
+		//Use the createCompletion method from OpenAI API to generate response to the user's input.
 		const response = await openai.createCompletion({
 			//parameters
 			//engine
@@ -152,20 +106,20 @@ function App() {
 			temperature: currentTemperature,
 		});
 
-		// When response is received, setInput state to empty string
+		//When response is received, setInput state to empty string
 		await setInput('');
 		console.log(response.data);
-		// update the newChatLog array with the chatbot's reponse
+		//update the newChatLog array with the chatbot's reponse
 		newChatLog = [
-			...chatLogs[currentModel],
+			...chatLogs,
 			{
 				user: 'gpt',
 				message: response.data.choices[0].text.toString().replace('\n\n', '\n'),
 			},
 		];
-		// update chat log state
-		await setChatLogs({ ...chatLogs, [currentModel]: newChatLog });
-	};
+		//update chat log state
+		await setChatLogs(newChatLog);
+	}
 
 	return (
 		<div className='flex text-[#2b3e2d] text-center font-[500]'>
