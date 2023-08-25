@@ -54,6 +54,7 @@ app.use(bodyParser.json());
 
 // Create endpoint for adding new chat
 app.post('/api/chatlogs', async (req, res) => {
+	console.log(req.body); //log the request content to my terminal
 	const { user, message } = req.body;
 
 	try {
