@@ -149,7 +149,7 @@ function App() {
 					))}
 				</select>
 				<div className='text-start text-sm my-3 w-[200px]'>
-					Controls the response engine. Davinci produces best results.
+					Controls the response engine. Davinci model produces best results.
 				</div>
 
 				<div className='text-xl font-semibold text-left mt-8 mb-4'>
